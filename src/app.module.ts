@@ -1,10 +1,15 @@
-import { Module } from '@nestjs/common';
+import { SSEMiddleware } from 'nestjs-sse';
+import { ElectricityMeasureGenerator } from './electricity-measure-generator';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [ElectricityMeasureGenerator],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(SSEMiddleware).forRoutes(AppController);
+  }
+}
